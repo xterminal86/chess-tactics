@@ -6,4 +6,6 @@ using UnityEngine.UI;
 public class Cell : MonoBehaviour 
 {
   public Image ImageComponent;
+
+  Unit _unitPresent;
 }

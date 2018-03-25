@@ -1973,8 +1973,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f426540d4e0a614cbccae814f463fd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CanvasReference: {fileID: 1798368362}
   GridHolder: {fileID: 1967108637}
   CellPrefab: {fileID: 1946087881123992, guid: c07ee54074de74241b40a4de7d98e902, type: 2}
+  UnitPrefab: {fileID: 1504598045667912, guid: ed5b723bd23378d4ab79c3c0bb95ac41, type: 2}
 --- !u!1 &1561924780
 GameObject:
   m_ObjectHideFlags: 0
@@ -2710,7 +2712,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_UiScaleMode: 0
-  m_ReferencePixelsPerUnit: 100
+  m_ReferencePixelsPerUnit: 1
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
   m_ScreenMatchMode: 0
