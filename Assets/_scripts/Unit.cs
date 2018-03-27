@@ -13,8 +13,15 @@ public class Unit : MonoBehaviour
   public PlayerType Owner;
 
   public int Health = 1;
+  public int Damage = 1;
+
+  public bool MovedFirstTime = false;
 
   Vector2Int _position = Vector2Int.zero;
+  public Vector2Int Position
+  {
+    get { return _position; }
+  }
 
   Dictionary<UnitType, string> _unitTextByType = new Dictionary<UnitType, string>()
   {
@@ -26,13 +33,14 @@ public class Unit : MonoBehaviour
     { UnitType.ROOK, "R" },
   };
 
-  public void Init(Vector2Int pos, UnitType unit, PlayerType owner, int health)
+  public void Init(Vector2Int pos, UnitType unit, PlayerType owner)
   {    
     ThisUnitType = unit;
     Owner = owner;
-    Health = health;
-
-    HealthBar.rectTransform.sizeDelta = new Vector2(0.32f * health, 0.32f);
+    Health = GlobalConstants.UnitHealthByType[unit];
+    Damage = GlobalConstants.UnitDamageByType[unit];
+      
+    HealthBar.rectTransform.sizeDelta = new Vector2(0.32f * Health, 0.32f);
 
     UnitText.text = _unitTextByType[unit];
 

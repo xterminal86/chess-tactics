@@ -1977,6 +1977,8 @@ MonoBehaviour:
   GridHolder: {fileID: 1967108637}
   CellPrefab: {fileID: 1946087881123992, guid: c07ee54074de74241b40a4de7d98e902, type: 2}
   UnitPrefab: {fileID: 1504598045667912, guid: ed5b723bd23378d4ab79c3c0bb95ac41, type: 2}
+  SelectionOutlinePrefab: {fileID: 1371792268530226, guid: 93aaf98a1418e8f45a9d5143fe8485f2,
+    type: 2}
 --- !u!1 &1561924780
 GameObject:
   m_ObjectHideFlags: 0

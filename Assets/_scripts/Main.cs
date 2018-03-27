@@ -10,6 +10,7 @@ public class Main : MonoBehaviour
   public RectTransform GridHolder;
   public GameObject CellPrefab;
   public GameObject UnitPrefab;
+  public GameObject SelectionOutlinePrefab;
 
   int _size = 8;
 
@@ -18,6 +19,8 @@ public class Main : MonoBehaviour
   {
     get { return _board; }
   }
+
+  GameObject _selectionOutline;
 
 	void Start () 
   {
@@ -57,6 +60,9 @@ public class Main : MonoBehaviour
 
     SetupPlayer1();
     SetupPlayer2();
+
+    _selectionOutline = Instantiate(SelectionOutlinePrefab);
+    _selectionOutline.GetComponent<RectTransform>().SetParent(GridHolder, false);
 	}
 
   void SetupPlayer1()
@@ -102,6 +108,81 @@ public class Main : MonoBehaviour
     rt.localPosition = new Vector3(pos.x, pos.y, 0.0f);
 
     Unit u = go.GetComponent<Unit>();
-    u.Init(pos, type, owner, GlobalConstants.UnitHealthByType[type]);
+    u.Init(pos, type, owner);
+
+    _board[pos.y, pos.x].UnitPresent = u;
+  }
+
+  RaycastHit _hitInfo;
+  void Update()
+  {
+    if (Input.GetMouseButtonDown(0))
+    {
+      Ray r = Camera.main.ScreenPointToRay(Input.mousePosition);
+      if (Physics.Raycast(r.origin, r.direction, out _hitInfo, Mathf.Infinity))
+      {
+        Cell c = _hitInfo.collider.gameObject.GetComponent<Cell>();
+
+        if (c.UnitPresent != null && c.UnitPresent.Owner == GameOverseer.Instance.PlayerTurn)
+        {
+          _selectionOutline.transform.localPosition = new Vector3(c.UnitPresent.Position.x, c.UnitPresent.Position.y, 0.0f);
+          _selectionOutline.gameObject.SetActive(true);
+
+          ShowValidMoves(c.UnitPresent);
+        }
+        else
+        {
+          ResetCellColors();
+          _selectionOutline.gameObject.SetActive(false);
+        }
+      }
+    }
+  }
+
+  Color _transparentColor = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+  Color _validColor = new Color(0.0f, 1.0f, 0.0f, 0.5f);
+  Color _invalidColor = new Color(1.0f, 0.0f, 0.0f, 0.5f);
+  void ShowValidMoves(Unit unit)
+  {    
+    ResetCellColors();
+
+    int ux = unit.Position.x;
+    int uy = unit.Position.y;
+
+    switch (unit.ThisUnitType)
+    {
+      case UnitType.PAWN:
+        if (unit.Owner == PlayerType.PLAYER1)
+        {
+          if (!unit.MovedFirstTime)
+          {
+            for (int i = 1; i < 3; i++)
+            {
+              if (_board[uy + i, ux].UnitPresent)
+              {
+                break;
+              }
+
+              _board[uy + i, ux].IsValidIndicator.color = _validColor;
+            }
+          }
+        }
+        else
+        {
+        }
+
+        break;
+    }
+  }
+
+  void ResetCellColors()
+  {
+    for (int x = 0; x < _size; x++)
+    {
+      for (int y = 0; y < _size; y++)
+      {
+        _board[x, y].IsValidIndicator.color = _transparentColor;
+      }
+    }
   }
 }
