@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class Unit : MonoBehaviour 
 {
-  public Text UnitText;
+  public TMP_Text UnitText;
   public Image UnitImage;
   public Image HealthBar;
 

@@ -123,6 +123,8 @@ public class Main : MonoBehaviour
       {
         Cell c = _hitInfo.collider.gameObject.GetComponent<Cell>();
 
+        ResetCellColors();
+
         if (c.UnitPresent != null && c.UnitPresent.Owner == GameOverseer.Instance.PlayerTurn)
         {
           _selectionOutline.transform.localPosition = new Vector3(c.UnitPresent.Position.x, c.UnitPresent.Position.y, 0.0f);
@@ -132,7 +134,6 @@ public class Main : MonoBehaviour
         }
         else
         {
-          ResetCellColors();
           _selectionOutline.gameObject.SetActive(false);
         }
       }
@@ -144,8 +145,6 @@ public class Main : MonoBehaviour
   Color _invalidColor = new Color(1.0f, 0.0f, 0.0f, 0.5f);
   void ShowValidMoves(Unit unit)
   {    
-    ResetCellColors();
-
     int ux = unit.Position.x;
     int uy = unit.Position.y;
 
@@ -158,7 +157,7 @@ public class Main : MonoBehaviour
           {
             for (int i = 1; i < 3; i++)
             {
-              if (_board[uy + i, ux].UnitPresent)
+              if (_board[uy + i, ux].UnitPresent && _board[uy + i, ux].UnitPresent.Owner == GameOverseer.Instance.PlayerTurn)
               {
                 break;
               }
