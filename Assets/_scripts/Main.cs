@@ -138,6 +138,11 @@ public class Main : MonoBehaviour
         }
       }
     }
+    else if (Input.GetMouseButtonDown(1))
+    {
+      ResetCellColors();
+      _selectionOutline.gameObject.SetActive(false);
+    }
   }
 
   Color _transparentColor = new Color(0.0f, 0.0f, 0.0f, 0.0f);
