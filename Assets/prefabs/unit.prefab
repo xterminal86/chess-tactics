@@ -254,6 +254,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb5fa993454e40f4dbb950c293ad373e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  RectTransformRef: {fileID: 224647827414263444}
   UnitText: {fileID: 114166149537914764}
   UnitImage: {fileID: 114613717883528574}
   HealthBar: {fileID: 114403508345995752}

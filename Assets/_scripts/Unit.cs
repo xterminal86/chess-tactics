@@ -6,6 +6,7 @@ using TMPro;
 
 public class Unit : MonoBehaviour 
 {
+  public RectTransform RectTransformRef;
   public TMP_Text UnitText;
   public Image UnitImage;
   public Image HealthBar;

@@ -97,6 +97,9 @@ public class Main : MonoBehaviour
     PlaceUnit(new Vector2Int(7, _size - 1), UnitType.ROOK, PlayerType.PLAYER2);
     PlaceUnit(new Vector2Int(2, _size - 1), UnitType.BISHOP, PlayerType.PLAYER2);
     PlaceUnit(new Vector2Int(5, _size - 1), UnitType.BISHOP, PlayerType.PLAYER2);
+
+    // Test
+    //PlaceUnit(new Vector2Int(3, 2), UnitType.PAWN, PlayerType.PLAYER2);
   }
 
   void PlaceUnit(Vector2Int pos, UnitType type, PlayerType owner)
@@ -131,9 +134,12 @@ public class Main : MonoBehaviour
           _selectionOutline.gameObject.SetActive(true);
 
           ShowValidMoves(c.UnitPresent);
+
+          GameOverseer.Instance.SelectedUnit = c.UnitPresent;
         }
         else
         {
+          TryToMoveUnit(c);
           _selectionOutline.gameObject.SetActive(false);
         }
       }
@@ -145,11 +151,46 @@ public class Main : MonoBehaviour
     }
   }
 
+  void TryToMoveUnit(Cell selectedCell)
+  {
+    if (GameOverseer.Instance.SelectedUnit != null)
+    {
+      int ux = GameOverseer.Instance.SelectedUnit.Position.x;
+      int uy = GameOverseer.Instance.SelectedUnit.Position.y;
+
+      int cx = (int)selectedCell.transform.localPosition.x;
+      int cy = (int)selectedCell.transform.localPosition.y;
+
+      foreach (var item in _validMoveCells)
+      {        
+        int x = (int)item.transform.localPosition.x;
+        int y = (int)item.transform.localPosition.y;
+          
+        if (cx == x && cy == y)
+        {
+          selectedCell.UnitPresent = null;
+
+          GameOverseer.Instance.SelectedUnit.RectTransformRef.localPosition = new Vector3(x, y, 0.0f);
+
+          _board[y, x].UnitPresent = GameOverseer.Instance.SelectedUnit;
+
+          break;
+        }
+      }
+
+      GameOverseer.Instance.SelectedUnit = null;
+    }
+  }
+
+  List<Cell> _validMoveCells = new List<Cell>();
+
   Color _transparentColor = new Color(0.0f, 0.0f, 0.0f, 0.0f);
   Color _validColor = new Color(0.0f, 1.0f, 0.0f, 0.5f);
   Color _invalidColor = new Color(1.0f, 0.0f, 0.0f, 0.5f);
   void ShowValidMoves(Unit unit)
   {    
+    _validMoveCells.Clear();
+
     int ux = unit.Position.x;
     int uy = unit.Position.y;
 
@@ -158,17 +199,33 @@ public class Main : MonoBehaviour
       case UnitType.PAWN:
         if (unit.Owner == PlayerType.PLAYER1)
         {
-          if (!unit.MovedFirstTime)
+          for (int i = 1; i < 3; i++)
           {
-            for (int i = 1; i < 3; i++)
+            if (unit.MovedFirstTime && i > 1)
             {
-              if (_board[uy + i, ux].UnitPresent && _board[uy + i, ux].UnitPresent.Owner == GameOverseer.Instance.PlayerTurn)
-              {
-                break;
-              }
-
-              _board[uy + i, ux].IsValidIndicator.color = _validColor;
+              break;
             }
+
+            if ((_board[uy + 1, ux + 1].UnitPresent && _board[uy + 1, ux + 1].UnitPresent.Owner != GameOverseer.Instance.PlayerTurn))
+            {
+              _board[uy + 1, ux + 1].IsValidIndicator.color = _invalidColor;
+              _validMoveCells.Add(_board[uy + 1, ux + 1]);
+            }
+
+            if ((_board[uy + 1, ux - 1].UnitPresent && _board[uy + 1, ux - 1].UnitPresent.Owner != GameOverseer.Instance.PlayerTurn))
+            {
+              _board[uy + 1, ux - 1].IsValidIndicator.color = _invalidColor;
+              _validMoveCells.Add(_board[uy + 1, ux - 1]);
+            }
+
+            _validMoveCells.Add(_board[uy + i, ux]);
+
+            if (_board[uy + i, ux].UnitPresent)
+            {
+              break;
+            }
+
+            _board[uy + i, ux].IsValidIndicator.color = _validColor;
           }
         }
         else

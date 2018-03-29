@@ -17,6 +17,8 @@ public class GameOverseer : MonoSingleton<GameOverseer>
     }
   }
 
+  public Unit SelectedUnit;
+
   public TMP_Text TurnIndicator;
 
   public override void Initialize()
