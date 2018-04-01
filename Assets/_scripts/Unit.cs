@@ -6,10 +6,11 @@ using TMPro;
 
 public class Unit : MonoBehaviour 
 {
+  public HealthIndicator HealthBar;
+
   public RectTransform RectTransformRef;
   public TMP_Text UnitText;
   public Image UnitImage;
-  public Image HealthBar;
 
   public UnitType ThisUnitType;
   public PlayerType Owner;
@@ -53,7 +54,7 @@ public class Unit : MonoBehaviour
     Health = GlobalConstants.UnitHealthByType[unit];
     Damage = GlobalConstants.UnitDamageByType[unit];
       
-    HealthBar.rectTransform.sizeDelta = new Vector2(0.32f * Health, 0.32f);
+    HealthBar.Init(Health);
 
     UnitText.text = _unitTextByType[unit];
 

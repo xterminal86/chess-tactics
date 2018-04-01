@@ -172,6 +172,12 @@ public class Main : MonoBehaviour
 
         if (cx == x && cy == y)
         {
+          if (GlobalConstants.CommandPointsByUnit[GameOverseer.Instance.SelectedUnit.ThisUnitType] > GameOverseer.Instance.CommandPoints)
+          {
+            Debug.LogWarning("Not enough command points!");
+            return;
+          }
+
           Vector2Int oldCoords = GameOverseer.Instance.SelectedUnit.ArrayCoordinates();
           GameOverseer.Instance.SelectedUnit.Position = new Vector2Int(y, x);
 
@@ -182,6 +188,14 @@ public class Main : MonoBehaviour
             
           _board[x, y].UnitPresent = GameOverseer.Instance.SelectedUnit;
           _board[oldCoords.x, oldCoords.y].UnitPresent = null;
+
+          GameOverseer.Instance.SpendCommandPoints(GlobalConstants.CommandPointsByUnit[GameOverseer.Instance.SelectedUnit.ThisUnitType]);
+
+          if (GameOverseer.Instance.CommandPoints == 0)
+          {
+            GameOverseer.Instance.TurnDone();
+          }
+
           break;
         }
       }
@@ -202,6 +216,11 @@ public class Main : MonoBehaviour
     int ux = unit.Position.x;
     int uy = unit.Position.y;
 
+    int hx = ux + 1;
+    int hy = uy + 1;
+    int lx = ux - 1;
+    int ly = uy - 1;
+
     switch (unit.ThisUnitType)
     {
       case UnitType.PAWN:
@@ -214,16 +233,16 @@ public class Main : MonoBehaviour
               break;
             }
 
-            if ((_board[uy + 1, ux + 1].UnitPresent && _board[uy + 1, ux + 1].UnitPresent.Owner != GameOverseer.Instance.PlayerTurn))
+            if (LimitsValid(lx, ly, hx, hy) && (_board[hy, hx].UnitPresent && _board[hy, hx].UnitPresent.Owner != GameOverseer.Instance.PlayerTurn))
             {
-              _board[uy + 1, ux + 1].IsValidIndicator.color = _invalidColor;
-              _validMoveCells.Add(_board[uy + 1, ux + 1]);
+              _board[hy, hx].IsValidIndicator.color = _invalidColor;
+              _validMoveCells.Add(_board[hy, hx]);
             }
 
-            if ((_board[uy + 1, ux - 1].UnitPresent && _board[uy + 1, ux - 1].UnitPresent.Owner != GameOverseer.Instance.PlayerTurn))
+            if (LimitsValid(lx, ly, hx, hy) && (_board[hy, lx].UnitPresent && _board[hy, lx].UnitPresent.Owner != GameOverseer.Instance.PlayerTurn))
             {
-              _board[uy + 1, ux - 1].IsValidIndicator.color = _invalidColor;
-              _validMoveCells.Add(_board[uy + 1, ux - 1]);
+              _board[hy, lx].IsValidIndicator.color = _invalidColor;
+              _validMoveCells.Add(_board[hy, lx]);
             }
 
             if (_board[uy + i, ux].UnitPresent)
@@ -242,6 +261,11 @@ public class Main : MonoBehaviour
 
         break;
     }
+  }
+
+  bool LimitsValid(int lx, int ly, int hx, int hy)
+  {
+    return (lx >= 0 && hx < _size && lx >= 0 && hy < _size);
   }
 
   void ResetCellColors()
