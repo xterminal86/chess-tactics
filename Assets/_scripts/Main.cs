@@ -50,6 +50,7 @@ public class Main : MonoBehaviour
         rt.localPosition = new Vector3(y, x, 0.0f);
 
         Cell c = go.GetComponent<Cell>();
+        c.ArrayCoordinates.Set(x, y);
         c.ImageComponent.color = colors[colorIndex];
 
         _board[x, y] = c;
@@ -126,6 +127,9 @@ public class Main : MonoBehaviour
       {
         Cell c = _hitInfo.collider.gameObject.GetComponent<Cell>();
 
+        int cx = c.ArrayCoordinates.x;
+        int cy = c.ArrayCoordinates.y;
+
         ResetCellColors();
 
         if (c.UnitPresent != null && c.UnitPresent.Owner == GameOverseer.Instance.PlayerTurn)
@@ -135,7 +139,7 @@ public class Main : MonoBehaviour
 
           ShowValidMoves(c.UnitPresent);
 
-          GameOverseer.Instance.SelectedUnit = c.UnitPresent;
+          GameOverseer.Instance.SelectedUnit = _board[cx, cy].UnitPresent;
         }
         else
         {
@@ -151,29 +155,33 @@ public class Main : MonoBehaviour
     }
   }
 
-  void TryToMoveUnit(Cell selectedCell)
+  void TryToMoveUnit(Cell c)
   {
     if (GameOverseer.Instance.SelectedUnit != null)
     {
-      int ux = GameOverseer.Instance.SelectedUnit.Position.x;
-      int uy = GameOverseer.Instance.SelectedUnit.Position.y;
+      int cx = c.ArrayCoordinates.x;
+      int cy = c.ArrayCoordinates.y;
 
-      int cx = (int)selectedCell.transform.localPosition.x;
-      int cy = (int)selectedCell.transform.localPosition.y;
+      int x = 0;
+      int y = 0;
 
       foreach (var item in _validMoveCells)
       {        
-        int x = (int)item.transform.localPosition.x;
-        int y = (int)item.transform.localPosition.y;
-          
+        x = item.ArrayCoordinates.x;
+        y = item.ArrayCoordinates.y;
+
         if (cx == x && cy == y)
         {
-          selectedCell.UnitPresent = null;
+          Vector2Int oldCoords = GameOverseer.Instance.SelectedUnit.ArrayCoordinates();
+          GameOverseer.Instance.SelectedUnit.Position = new Vector2Int(y, x);
 
-          GameOverseer.Instance.SelectedUnit.RectTransformRef.localPosition = new Vector3(x, y, 0.0f);
-
-          _board[y, x].UnitPresent = GameOverseer.Instance.SelectedUnit;
-
+          if (!GameOverseer.Instance.SelectedUnit.MovedFirstTime)
+          {
+            GameOverseer.Instance.SelectedUnit.MovedFirstTime = true;
+          }
+            
+          _board[x, y].UnitPresent = GameOverseer.Instance.SelectedUnit;
+          _board[oldCoords.x, oldCoords.y].UnitPresent = null;
           break;
         }
       }
@@ -218,12 +226,12 @@ public class Main : MonoBehaviour
               _validMoveCells.Add(_board[uy + 1, ux - 1]);
             }
 
-            _validMoveCells.Add(_board[uy + i, ux]);
-
             if (_board[uy + i, ux].UnitPresent)
             {
-              break;
+              break;            
             }
+
+            _validMoveCells.Add(_board[uy + i, ux]);
 
             _board[uy + i, ux].IsValidIndicator.color = _validColor;
           }

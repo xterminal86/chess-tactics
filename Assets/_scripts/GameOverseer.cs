@@ -6,6 +6,8 @@ using TMPro;
 
 public class GameOverseer : MonoSingleton<GameOverseer> 
 {
+  public Sprite[] UnitsSprites;
+  
   PlayerType _playerTurn = PlayerType.PLAYER1;
   public PlayerType PlayerTurn
   {

@@ -9,4 +9,5 @@ public class Cell : MonoBehaviour
   public Image IsValidIndicator;
 
   public Unit UnitPresent;
+  public Vector2Int ArrayCoordinates = Vector2Int.zero;
 }

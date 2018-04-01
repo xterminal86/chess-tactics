@@ -22,7 +22,18 @@ public class Unit : MonoBehaviour
   Vector2Int _position = Vector2Int.zero;
   public Vector2Int Position
   {
+    set
+    {
+      transform.localPosition = new Vector3(value.x, value.y, 0.0f);
+      _position.Set(value.x, value.y);
+    }
+
     get { return _position; }
+  }
+
+  public Vector2Int ArrayCoordinates()
+  {
+    return new Vector2Int(_position.y, _position.x);
   }
 
   Dictionary<UnitType, string> _unitTextByType = new Dictionary<UnitType, string>()
@@ -46,10 +57,38 @@ public class Unit : MonoBehaviour
 
     UnitText.text = _unitTextByType[unit];
 
-    UnitImage.color = (Owner == PlayerType.PLAYER1) ? Color.white : Color.cyan;
+    switch (unit)
+    {
+      case UnitType.PAWN:
+        UnitImage.sprite = (Owner == PlayerType.PLAYER1) ? GameOverseer.Instance.UnitsSprites[5] : GameOverseer.Instance.UnitsSprites[11];
+        break;
+
+      case UnitType.BISHOP:
+        UnitImage.sprite = (Owner == PlayerType.PLAYER1) ? GameOverseer.Instance.UnitsSprites[2] : GameOverseer.Instance.UnitsSprites[8];
+        break;
+
+      case UnitType.KING:
+        UnitImage.sprite = (Owner == PlayerType.PLAYER1) ? GameOverseer.Instance.UnitsSprites[0] : GameOverseer.Instance.UnitsSprites[6];
+        break;
+
+      case UnitType.QUEEN:
+        UnitImage.sprite = (Owner == PlayerType.PLAYER1) ? GameOverseer.Instance.UnitsSprites[1] : GameOverseer.Instance.UnitsSprites[7];
+        break;
+
+      case UnitType.KNIGHT:
+        UnitImage.sprite = (Owner == PlayerType.PLAYER1) ? GameOverseer.Instance.UnitsSprites[3] : GameOverseer.Instance.UnitsSprites[9];
+        break;
+
+      case UnitType.ROOK:
+        UnitImage.sprite = (Owner == PlayerType.PLAYER1) ? GameOverseer.Instance.UnitsSprites[4] : GameOverseer.Instance.UnitsSprites[10];
+        break;
+    }
+
+    //UnitImage.color = (Owner == PlayerType.PLAYER1) ? Color.white : Color.cyan;
 
     _position = pos;
 
+    /*
     if (unit == UnitType.PAWN)
     {
       UnitImage.rectTransform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
@@ -62,6 +101,7 @@ public class Unit : MonoBehaviour
     {
       UnitImage.rectTransform.localScale = Vector3.one;
     }
+    */
   }
 }
 
