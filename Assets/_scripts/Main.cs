@@ -68,36 +68,36 @@ public class Main : MonoBehaviour
 
   void SetupPlayer1()
   {
-    for (int x = 0; x < _size; x++)
+    for (int y = 0; y < _size; y++)
     {
-      PlaceUnit(new Vector2Int(x, 1), UnitType.PAWN, PlayerType.PLAYER1);
+      PlaceUnit(new Vector2Int(1, y), UnitType.PAWN, PlayerType.PLAYER1);
     }
 
-    PlaceUnit(new Vector2Int(4, 0), UnitType.KING, PlayerType.PLAYER1);
-    PlaceUnit(new Vector2Int(3, 0), UnitType.QUEEN, PlayerType.PLAYER1);
-    PlaceUnit(new Vector2Int(1, 0), UnitType.KNIGHT, PlayerType.PLAYER1);
-    PlaceUnit(new Vector2Int(6, 0), UnitType.KNIGHT, PlayerType.PLAYER1);
+    PlaceUnit(new Vector2Int(0, 4), UnitType.KING, PlayerType.PLAYER1);
+    PlaceUnit(new Vector2Int(0, 3), UnitType.QUEEN, PlayerType.PLAYER1);
+    PlaceUnit(new Vector2Int(0, 1), UnitType.KNIGHT, PlayerType.PLAYER1);
+    PlaceUnit(new Vector2Int(0, 6), UnitType.KNIGHT, PlayerType.PLAYER1);
     PlaceUnit(new Vector2Int(0, 0), UnitType.ROOK, PlayerType.PLAYER1);
-    PlaceUnit(new Vector2Int(7, 0), UnitType.ROOK, PlayerType.PLAYER1);
-    PlaceUnit(new Vector2Int(2, 0), UnitType.BISHOP, PlayerType.PLAYER1);
-    PlaceUnit(new Vector2Int(5, 0), UnitType.BISHOP, PlayerType.PLAYER1);
+    PlaceUnit(new Vector2Int(0, 7), UnitType.ROOK, PlayerType.PLAYER1);
+    PlaceUnit(new Vector2Int(0, 2), UnitType.BISHOP, PlayerType.PLAYER1);
+    PlaceUnit(new Vector2Int(0, 5), UnitType.BISHOP, PlayerType.PLAYER1);
   }
 
   void SetupPlayer2()
   {
-    for (int x = 0; x < _size; x++)
+    for (int y = 0; y < _size; y++)
     {
-      PlaceUnit(new Vector2Int(x, _size - 2), UnitType.PAWN, PlayerType.PLAYER2);
+      PlaceUnit(new Vector2Int(_size - 2, y), UnitType.PAWN, PlayerType.PLAYER2);
     }
 
-    PlaceUnit(new Vector2Int(4, _size - 1), UnitType.KING, PlayerType.PLAYER2);
-    PlaceUnit(new Vector2Int(3, _size - 1), UnitType.QUEEN, PlayerType.PLAYER2);
-    PlaceUnit(new Vector2Int(1, _size - 1), UnitType.KNIGHT, PlayerType.PLAYER2);
-    PlaceUnit(new Vector2Int(6, _size - 1), UnitType.KNIGHT, PlayerType.PLAYER2);
-    PlaceUnit(new Vector2Int(0, _size - 1), UnitType.ROOK, PlayerType.PLAYER2);
-    PlaceUnit(new Vector2Int(7, _size - 1), UnitType.ROOK, PlayerType.PLAYER2);
-    PlaceUnit(new Vector2Int(2, _size - 1), UnitType.BISHOP, PlayerType.PLAYER2);
-    PlaceUnit(new Vector2Int(5, _size - 1), UnitType.BISHOP, PlayerType.PLAYER2);
+    PlaceUnit(new Vector2Int(_size - 1, 4), UnitType.KING, PlayerType.PLAYER2);
+    PlaceUnit(new Vector2Int(_size - 1, 3), UnitType.QUEEN, PlayerType.PLAYER2);
+    PlaceUnit(new Vector2Int(_size - 1, 1), UnitType.KNIGHT, PlayerType.PLAYER2);
+    PlaceUnit(new Vector2Int(_size - 1, 6), UnitType.KNIGHT, PlayerType.PLAYER2);
+    PlaceUnit(new Vector2Int(_size - 1, 0), UnitType.ROOK, PlayerType.PLAYER2);
+    PlaceUnit(new Vector2Int(_size - 1, 7), UnitType.ROOK, PlayerType.PLAYER2);
+    PlaceUnit(new Vector2Int(_size - 1, 2), UnitType.BISHOP, PlayerType.PLAYER2);
+    PlaceUnit(new Vector2Int(_size - 1, 5), UnitType.BISHOP, PlayerType.PLAYER2);
 
     // Test
     //PlaceUnit(new Vector2Int(3, 2), UnitType.PAWN, PlayerType.PLAYER2);
@@ -109,12 +109,12 @@ public class Main : MonoBehaviour
 
     var rt = go.GetComponent<RectTransform>();
     rt.SetParent(CanvasReference.transform, false);
-    rt.localPosition = new Vector3(pos.x, pos.y, 0.0f);
+    rt.localPosition = new Vector3(pos.y, pos.x, 0.0f);
 
     Unit u = go.GetComponent<Unit>();
-    u.Init(pos, type, owner);
+    u.Init(new Vector2Int(pos.y, pos.x), type, owner);
 
-    _board[pos.y, pos.x].UnitPresent = u;
+    _board[pos.x, pos.y].UnitPresent = u;
   }
 
   RaycastHit _hitInfo;
@@ -134,7 +134,7 @@ public class Main : MonoBehaviour
 
         if (c.UnitPresent != null && c.UnitPresent.Owner == GameOverseer.Instance.PlayerTurn)
         {
-          _selectionOutline.transform.localPosition = new Vector3(c.UnitPresent.Position.x, c.UnitPresent.Position.y, 0.0f);
+          _selectionOutline.transform.localPosition = new Vector3(c.UnitPresent.WorldPosition.x, c.UnitPresent.WorldPosition.y, 0.0f);
           _selectionOutline.gameObject.SetActive(true);
 
           ShowValidMoves(c.UnitPresent);
@@ -179,7 +179,7 @@ public class Main : MonoBehaviour
           }
 
           Vector2Int oldCoords = GameOverseer.Instance.SelectedUnit.ArrayCoordinates();
-          GameOverseer.Instance.SelectedUnit.Position = new Vector2Int(y, x);
+          GameOverseer.Instance.SelectedUnit.WorldPosition = new Vector2Int(y, x);
 
           if (!GameOverseer.Instance.SelectedUnit.MovedFirstTime)
           {
@@ -213,8 +213,8 @@ public class Main : MonoBehaviour
   {    
     _validMoveCells.Clear();
 
-    int ux = unit.Position.x;
-    int uy = unit.Position.y;
+    int ux = unit.ArrayCoordinates().x;
+    int uy = unit.ArrayCoordinates().y;
 
     int hx = ux + 1;
     int hy = uy + 1;
@@ -233,30 +233,58 @@ public class Main : MonoBehaviour
               break;
             }
 
-            if (LimitsValid(lx, ly, hx, hy) && (_board[hy, hx].UnitPresent && _board[hy, hx].UnitPresent.Owner != GameOverseer.Instance.PlayerTurn))
+            if (LimitsValid(lx, ly, hx, hy) && (_board[hx, hy].UnitPresent && _board[hx, hy].UnitPresent.Owner != GameOverseer.Instance.PlayerTurn))
             {
-              _board[hy, hx].IsValidIndicator.color = _invalidColor;
-              _validMoveCells.Add(_board[hy, hx]);
+              _board[hx, hy].IsValidIndicator.color = _invalidColor;
+              _validMoveCells.Add(_board[hx, hy]);
             }
 
-            if (LimitsValid(lx, ly, hx, hy) && (_board[hy, lx].UnitPresent && _board[hy, lx].UnitPresent.Owner != GameOverseer.Instance.PlayerTurn))
+            if (LimitsValid(lx, ly, hx, hy) && (_board[hx, ly].UnitPresent && _board[hx, ly].UnitPresent.Owner != GameOverseer.Instance.PlayerTurn))
             {
-              _board[hy, lx].IsValidIndicator.color = _invalidColor;
-              _validMoveCells.Add(_board[hy, lx]);
+              _board[hx, ly].IsValidIndicator.color = _invalidColor;
+              _validMoveCells.Add(_board[hx, ly]);
             }
 
-            if (_board[uy + i, ux].UnitPresent)
+            if (_board[ux + i, uy].UnitPresent)
             {
               break;            
             }
 
-            _validMoveCells.Add(_board[uy + i, ux]);
+            _validMoveCells.Add(_board[ux + i, uy]);
 
-            _board[uy + i, ux].IsValidIndicator.color = _validColor;
+            _board[ux + i, uy].IsValidIndicator.color = _validColor;
           }
         }
         else
         {
+          for (int i = 1; i < 3; i++)
+          {
+            if (unit.MovedFirstTime && i > 1)
+            {
+              break;
+            }
+
+            if (LimitsValid(lx, ly, hx, hy) && (_board[lx, ly].UnitPresent && _board[lx, ly].UnitPresent.Owner != GameOverseer.Instance.PlayerTurn))
+            {
+              _board[lx, ly].IsValidIndicator.color = _invalidColor;
+              _validMoveCells.Add(_board[lx, ly]);
+            }
+
+            if (LimitsValid(lx, ly, hx, hy) && (_board[lx, hy].UnitPresent && _board[lx, hy].UnitPresent.Owner != GameOverseer.Instance.PlayerTurn))
+            {
+              _board[lx, hy].IsValidIndicator.color = _invalidColor;
+              _validMoveCells.Add(_board[lx, hy]);
+            }
+
+            if (_board[ux - i, uy].UnitPresent)
+            {
+              break;            
+            }
+
+            _validMoveCells.Add(_board[ux - i, uy]);
+
+            _board[ux - i, uy].IsValidIndicator.color = _validColor;
+          }
         }
 
         break;

@@ -20,21 +20,21 @@ public class Unit : MonoBehaviour
 
   public bool MovedFirstTime = false;
 
-  Vector2Int _position = Vector2Int.zero;
-  public Vector2Int Position
+  Vector2Int _worldPosition = Vector2Int.zero;
+  public Vector2Int WorldPosition
   {
     set
     {
       transform.localPosition = new Vector3(value.x, value.y, 0.0f);
-      _position.Set(value.x, value.y);
+      _worldPosition.Set(value.x, value.y);
     }
 
-    get { return _position; }
+    get { return _worldPosition; }
   }
 
   public Vector2Int ArrayCoordinates()
   {
-    return new Vector2Int(_position.y, _position.x);
+    return new Vector2Int(_worldPosition.y, _worldPosition.x);
   }
 
   Dictionary<UnitType, string> _unitTextByType = new Dictionary<UnitType, string>()
@@ -87,7 +87,7 @@ public class Unit : MonoBehaviour
 
     //UnitImage.color = (Owner == PlayerType.PLAYER1) ? Color.white : Color.cyan;
 
-    _position = pos;
+    _worldPosition = pos;
 
     /*
     if (unit == UnitType.PAWN)
