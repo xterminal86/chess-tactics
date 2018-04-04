@@ -19,6 +19,7 @@ public class Unit : MonoBehaviour
   public int Damage = 1;
 
   public bool MovedFirstTime = false;
+  public bool IsRanged = false;
 
   Vector2Int _worldPosition = Vector2Int.zero;
   public Vector2Int WorldPosition
@@ -62,47 +63,36 @@ public class Unit : MonoBehaviour
     {
       case UnitType.PAWN:
         UnitImage.sprite = (Owner == PlayerType.PLAYER1) ? GameOverseer.Instance.UnitsSprites[5] : GameOverseer.Instance.UnitsSprites[11];
+        IsRanged = false;
         break;
 
       case UnitType.BISHOP:
         UnitImage.sprite = (Owner == PlayerType.PLAYER1) ? GameOverseer.Instance.UnitsSprites[2] : GameOverseer.Instance.UnitsSprites[8];
+        IsRanged = true;
         break;
 
       case UnitType.KING:
         UnitImage.sprite = (Owner == PlayerType.PLAYER1) ? GameOverseer.Instance.UnitsSprites[0] : GameOverseer.Instance.UnitsSprites[6];
+        IsRanged = false;
         break;
 
       case UnitType.QUEEN:
         UnitImage.sprite = (Owner == PlayerType.PLAYER1) ? GameOverseer.Instance.UnitsSprites[1] : GameOverseer.Instance.UnitsSprites[7];
+        IsRanged = false;
         break;
 
       case UnitType.KNIGHT:
         UnitImage.sprite = (Owner == PlayerType.PLAYER1) ? GameOverseer.Instance.UnitsSprites[3] : GameOverseer.Instance.UnitsSprites[9];
+        IsRanged = false;
         break;
 
       case UnitType.ROOK:
         UnitImage.sprite = (Owner == PlayerType.PLAYER1) ? GameOverseer.Instance.UnitsSprites[4] : GameOverseer.Instance.UnitsSprites[10];
+        IsRanged = true;
         break;
     }
 
-    //UnitImage.color = (Owner == PlayerType.PLAYER1) ? Color.white : Color.cyan;
-
     _worldPosition = pos;
-
-    /*
-    if (unit == UnitType.PAWN)
-    {
-      UnitImage.rectTransform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-    }
-    else if (unit == UnitType.BISHOP || unit == UnitType.KNIGHT || unit == UnitType.ROOK)
-    {
-      UnitImage.rectTransform.localScale = new Vector3(0.75f, 0.75f, 0.75f);
-    }
-    else if (unit == UnitType.KING || unit == UnitType.QUEEN)
-    {
-      UnitImage.rectTransform.localScale = Vector3.one;
-    }
-    */
   }
 }
 

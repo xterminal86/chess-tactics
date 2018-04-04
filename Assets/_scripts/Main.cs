@@ -213,6 +213,199 @@ public class Main : MonoBehaviour
   {    
     _validMoveCells.Clear();
 
+    switch (unit.ThisUnitType)
+    {
+      case UnitType.PAWN:
+        ProcessPawn(unit);
+        break;
+
+      case UnitType.KNIGHT:
+        ProcessKnight(unit);
+        break;
+
+      case UnitType.BISHOP:
+        ProcessBishop(unit);
+        break;
+
+      case UnitType.ROOK:
+        ProcessRook(unit);
+        break;
+
+      case UnitType.QUEEN:
+      case UnitType.KING:
+        ProcessKingAndQueen(unit);
+        break;        
+    }
+  }
+
+  // FIXME: 1 cell movement / attack for now for both
+  void ProcessKingAndQueen(Unit unit)
+  {
+    int ux = unit.ArrayCoordinates().x;
+    int uy = unit.ArrayCoordinates().y;
+
+    int lx = ux - 1;
+    int ly = uy - 1;
+    int hx = ux + 1;
+    int hy = uy + 1;
+
+    for (int x = lx; x <= hx; x++)
+    {
+      for (int y = ly; y <= hy; y++)
+      {
+        Vector2Int coord = new Vector2Int(x, y);
+
+        if (!IsInGrid(coord) || (x == ux && y == uy))
+        {
+          continue;
+        }
+
+        if (_board[coord.x, coord.y].UnitPresent && _board[coord.x, coord.y].UnitPresent.Owner != GameOverseer.Instance.PlayerTurn)
+        {
+          _board[coord.x, coord.y].IsValidIndicator.color = _invalidColor;
+          _validMoveCells.Add(_board[coord.x, coord.y]);
+        }
+        else if (!_board[coord.x, coord.y].UnitPresent)
+        {
+          _board[coord.x, coord.y].IsValidIndicator.color = _validColor;
+          _validMoveCells.Add(_board[coord.x, coord.y]);
+        }
+        else if (_board[coord.x, coord.y].UnitPresent && _board[coord.x, coord.y].UnitPresent.Owner == GameOverseer.Instance.PlayerTurn)
+        {
+          continue;
+        }          
+      }
+    }
+  }
+
+  void ProcessRook(Unit unit)
+  {
+    int ux = unit.ArrayCoordinates().x;
+    int uy = unit.ArrayCoordinates().y;
+
+    List<Vector2Int> mults = new List<Vector2Int>() 
+    {
+      new Vector2Int(1, 0),
+      new Vector2Int(0, 1),
+      new Vector2Int(-1, 0),
+      new Vector2Int(0, -1)
+    };
+
+    for (int i = 0; i < 4; i++)
+    {
+      for (int additive = 1; additive < _size; additive++)
+      {
+        Vector2Int coord = new Vector2Int(ux + additive * mults[i].x, uy + additive * mults[i].y);
+
+        if (!IsInGrid(coord))
+        {
+          break;
+        }
+
+        if (_board[coord.x, coord.y].UnitPresent && _board[coord.x, coord.y].UnitPresent.Owner != GameOverseer.Instance.PlayerTurn)
+        {
+          _board[coord.x, coord.y].IsValidIndicator.color = _invalidColor;
+          _validMoveCells.Add(_board[coord.x, coord.y]);
+          break;
+        }
+
+        if (_board[coord.x, coord.y].UnitPresent && _board[coord.x, coord.y].UnitPresent.Owner == GameOverseer.Instance.PlayerTurn)
+        {
+          break;
+        }
+
+        if (!_board[coord.x, coord.y].UnitPresent)
+        {
+          _board[coord.x, coord.y].IsValidIndicator.color = _validColor;
+          _validMoveCells.Add(_board[coord.x, coord.y]);
+        }
+      }
+    }
+  }
+
+  void ProcessBishop(Unit unit)
+  {
+    int ux = unit.ArrayCoordinates().x;
+    int uy = unit.ArrayCoordinates().y;
+
+    List<Vector2Int> mults = new List<Vector2Int>() 
+    {
+      new Vector2Int(1, 1),
+      new Vector2Int(1, -1),
+      new Vector2Int(-1, 1),
+      new Vector2Int(-1, -1)
+    };
+
+    for (int i = 0; i < 4; i++)
+    {
+      for (int additive = 1; additive < _size; additive++)
+      {
+        Vector2Int coord = new Vector2Int(ux + additive * mults[i].x, uy + additive * mults[i].y);
+
+        if (!IsInGrid(coord))
+        {
+          break;
+        }
+
+        if (_board[coord.x, coord.y].UnitPresent && _board[coord.x, coord.y].UnitPresent.Owner != GameOverseer.Instance.PlayerTurn)
+        {
+          _board[coord.x, coord.y].IsValidIndicator.color = _invalidColor;
+          _validMoveCells.Add(_board[coord.x, coord.y]);
+          break;
+        }
+
+        if (_board[coord.x, coord.y].UnitPresent && _board[coord.x, coord.y].UnitPresent.Owner == GameOverseer.Instance.PlayerTurn)
+        {
+          break;
+        }
+
+        if (!_board[coord.x, coord.y].UnitPresent)
+        {
+          _board[coord.x, coord.y].IsValidIndicator.color = _validColor;
+          _validMoveCells.Add(_board[coord.x, coord.y]);
+        }
+      }
+    }
+  }
+
+  void ProcessKnight(Unit unit)
+  {
+    int ux = unit.ArrayCoordinates().x;
+    int uy = unit.ArrayCoordinates().y;
+
+    List<Vector2Int> validCells = new List<Vector2Int>() 
+    {
+      new Vector2Int(ux + 2, uy + 1),
+      new Vector2Int(ux + 1, uy + 2),
+      new Vector2Int(ux - 1, uy + 2),
+      new Vector2Int(ux - 2, uy + 1),
+      new Vector2Int(ux - 2, uy - 1),
+      new Vector2Int(ux - 1, uy - 2),
+      new Vector2Int(ux + 1, uy - 2),
+      new Vector2Int(ux + 2, uy - 1)
+    };
+
+    foreach (var coord in validCells)
+    {
+      if (IsInGrid(coord) && _board[coord.x, coord.y].UnitPresent && _board[coord.x, coord.y].UnitPresent.Owner != GameOverseer.Instance.PlayerTurn)
+      {
+        _board[coord.x, coord.y].IsValidIndicator.color = _invalidColor;
+        _validMoveCells.Add(_board[coord.x, coord.y]);
+      }
+      else if (IsInGrid(coord) && _board[coord.x, coord.y].UnitPresent && _board[coord.x, coord.y].UnitPresent.Owner == GameOverseer.Instance.PlayerTurn)
+      {
+        continue;
+      }
+      else if (IsInGrid(coord) && !_board[coord.x, coord.y].UnitPresent)
+      {
+        _board[coord.x, coord.y].IsValidIndicator.color = _validColor;
+        _validMoveCells.Add(_board[coord.x, coord.y]);
+      }
+    }
+  }
+
+  void ProcessPawn(Unit unit)
+  {
     int ux = unit.ArrayCoordinates().x;
     int uy = unit.ArrayCoordinates().y;
 
@@ -221,79 +414,78 @@ public class Main : MonoBehaviour
     int lx = ux - 1;
     int ly = uy - 1;
 
-    switch (unit.ThisUnitType)
+    if (unit.Owner == PlayerType.PLAYER1)
     {
-      case UnitType.PAWN:
-        if (unit.Owner == PlayerType.PLAYER1)
+      for (int i = 1; i < 3; i++)
+      {
+        if (unit.MovedFirstTime && i > 1)
         {
-          for (int i = 1; i < 3; i++)
-          {
-            if (unit.MovedFirstTime && i > 1)
-            {
-              break;
-            }
-
-            if (LimitsValid(lx, ly, hx, hy) && (_board[hx, hy].UnitPresent && _board[hx, hy].UnitPresent.Owner != GameOverseer.Instance.PlayerTurn))
-            {
-              _board[hx, hy].IsValidIndicator.color = _invalidColor;
-              _validMoveCells.Add(_board[hx, hy]);
-            }
-
-            if (LimitsValid(lx, ly, hx, hy) && (_board[hx, ly].UnitPresent && _board[hx, ly].UnitPresent.Owner != GameOverseer.Instance.PlayerTurn))
-            {
-              _board[hx, ly].IsValidIndicator.color = _invalidColor;
-              _validMoveCells.Add(_board[hx, ly]);
-            }
-
-            if (_board[ux + i, uy].UnitPresent)
-            {
-              break;            
-            }
-
-            _validMoveCells.Add(_board[ux + i, uy]);
-
-            _board[ux + i, uy].IsValidIndicator.color = _validColor;
-          }
-        }
-        else
-        {
-          for (int i = 1; i < 3; i++)
-          {
-            if (unit.MovedFirstTime && i > 1)
-            {
-              break;
-            }
-
-            if (LimitsValid(lx, ly, hx, hy) && (_board[lx, ly].UnitPresent && _board[lx, ly].UnitPresent.Owner != GameOverseer.Instance.PlayerTurn))
-            {
-              _board[lx, ly].IsValidIndicator.color = _invalidColor;
-              _validMoveCells.Add(_board[lx, ly]);
-            }
-
-            if (LimitsValid(lx, ly, hx, hy) && (_board[lx, hy].UnitPresent && _board[lx, hy].UnitPresent.Owner != GameOverseer.Instance.PlayerTurn))
-            {
-              _board[lx, hy].IsValidIndicator.color = _invalidColor;
-              _validMoveCells.Add(_board[lx, hy]);
-            }
-
-            if (_board[ux - i, uy].UnitPresent)
-            {
-              break;            
-            }
-
-            _validMoveCells.Add(_board[ux - i, uy]);
-
-            _board[ux - i, uy].IsValidIndicator.color = _validColor;
-          }
+          break;
         }
 
-        break;
+        if (LimitsValid(lx, ly, hx, hy) && (_board[hx, hy].UnitPresent && _board[hx, hy].UnitPresent.Owner != GameOverseer.Instance.PlayerTurn))
+        {
+          _board[hx, hy].IsValidIndicator.color = _invalidColor;
+          _validMoveCells.Add(_board[hx, hy]);
+        }
+
+        if (LimitsValid(lx, ly, hx, hy) && (_board[hx, ly].UnitPresent && _board[hx, ly].UnitPresent.Owner != GameOverseer.Instance.PlayerTurn))
+        {
+          _board[hx, ly].IsValidIndicator.color = _invalidColor;
+          _validMoveCells.Add(_board[hx, ly]);
+        }
+
+        if (_board[ux + i, uy].UnitPresent)
+        {
+          break;            
+        }
+
+        _validMoveCells.Add(_board[ux + i, uy]);
+
+        _board[ux + i, uy].IsValidIndicator.color = _validColor;
+      }
     }
+    else
+    {
+      for (int i = 1; i < 3; i++)
+      {
+        if (unit.MovedFirstTime && i > 1)
+        {
+          break;
+        }
+
+        if (LimitsValid(lx, ly, hx, hy) && (_board[lx, ly].UnitPresent && _board[lx, ly].UnitPresent.Owner != GameOverseer.Instance.PlayerTurn))
+        {
+          _board[lx, ly].IsValidIndicator.color = _invalidColor;
+          _validMoveCells.Add(_board[lx, ly]);
+        }
+
+        if (LimitsValid(lx, ly, hx, hy) && (_board[lx, hy].UnitPresent && _board[lx, hy].UnitPresent.Owner != GameOverseer.Instance.PlayerTurn))
+        {
+          _board[lx, hy].IsValidIndicator.color = _invalidColor;
+          _validMoveCells.Add(_board[lx, hy]);
+        }
+
+        if (_board[ux - i, uy].UnitPresent)
+        {
+          break;            
+        }
+
+        _validMoveCells.Add(_board[ux - i, uy]);
+
+        _board[ux - i, uy].IsValidIndicator.color = _validColor;
+      }
+    }
+  }
+
+  bool IsInGrid(Vector2Int coord)
+  {
+    return (coord.x >= 0 && coord.x < _size && coord.y >= 0 && coord.y < _size);
   }
 
   bool LimitsValid(int lx, int ly, int hx, int hy)
   {
-    return (lx >= 0 && hx < _size && lx >= 0 && hy < _size);
+    return (lx >= 0 && hx < _size && ly >= 0 && hy < _size);
   }
 
   void ResetCellColors()
