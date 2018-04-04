@@ -117,6 +117,8 @@ public class Main : MonoBehaviour
     _board[pos.x, pos.y].UnitPresent = u;
   }
 
+  Unit _selectedUnit;
+
   RaycastHit _hitInfo;
   void Update()
   {
@@ -139,7 +141,7 @@ public class Main : MonoBehaviour
 
           ShowValidMoves(c.UnitPresent);
 
-          GameOverseer.Instance.SelectedUnit = _board[cx, cy].UnitPresent;
+          _selectedUnit = _board[cx, cy].UnitPresent;
         }
         else
         {
@@ -157,7 +159,7 @@ public class Main : MonoBehaviour
 
   void TryToMoveUnit(Cell c)
   {
-    if (GameOverseer.Instance.SelectedUnit != null)
+    if (_selectedUnit != null)
     {
       int cx = c.ArrayCoordinates.x;
       int cy = c.ArrayCoordinates.y;
@@ -172,36 +174,58 @@ public class Main : MonoBehaviour
 
         if (cx == x && cy == y)
         {
-          if (GlobalConstants.CommandPointsByUnit[GameOverseer.Instance.SelectedUnit.ThisUnitType] > GameOverseer.Instance.CommandPoints)
+          if (GlobalConstants.CommandPointsByUnit[_selectedUnit.ThisUnitType] > GameOverseer.Instance.CommandPoints)
           {
             Debug.LogWarning("Not enough command points!");
             return;
           }
 
-          Vector2Int oldCoords = GameOverseer.Instance.SelectedUnit.ArrayCoordinates();
-          GameOverseer.Instance.SelectedUnit.WorldPosition = new Vector2Int(y, x);
+          Unit unitPresent = _board[x, y].UnitPresent;
 
-          if (!GameOverseer.Instance.SelectedUnit.MovedFirstTime)
+          if (!unitPresent)
           {
-            GameOverseer.Instance.SelectedUnit.MovedFirstTime = true;
+            MoveUnit(_selectedUnit, new Vector2Int(x, y));
+            GameOverseer.Instance.SpendCommandPoints(GlobalConstants.CommandPointsByUnit[_selectedUnit.ThisUnitType]);
+            break;
           }
-            
-          _board[x, y].UnitPresent = GameOverseer.Instance.SelectedUnit;
-          _board[oldCoords.x, oldCoords.y].UnitPresent = null;
-
-          GameOverseer.Instance.SpendCommandPoints(GlobalConstants.CommandPointsByUnit[GameOverseer.Instance.SelectedUnit.ThisUnitType]);
-
-          if (GameOverseer.Instance.CommandPoints == 0)
+          else if (unitPresent && unitPresent.Owner != GameOverseer.Instance.PlayerTurn)
           {
-            GameOverseer.Instance.TurnDone();
-          }
+            if (!_selectedUnit.IsRanged)
+            {
+              unitPresent.ReceiveDamage(GlobalConstants.UnitDamageByType[_selectedUnit.ThisUnitType]);
 
-          break;
+              if (unitPresent.IsKilled)
+              {
+                MoveUnit(_selectedUnit, unitPresent.ArrayCoordinates());
+              }
+
+              GameOverseer.Instance.SpendCommandPoints(GlobalConstants.CommandPointsByUnit[_selectedUnit.ThisUnitType]);
+
+              //break;
+            }
+            else
+            {
+            }
+          }
         }
       }
 
-      GameOverseer.Instance.SelectedUnit = null;
+      _selectedUnit = null;
     }
+  }
+
+  void MoveUnit(Unit unit, Vector2Int coords)
+  {
+    Vector2Int oldCoords = unit.ArrayCoordinates();
+    unit.WorldPosition = new Vector2Int(coords.y, coords.x);
+
+    if (!unit.MovedFirstTime)
+    {
+      unit.MovedFirstTime = true;
+    }
+
+    _board[coords.x, coords.y].UnitPresent = unit;
+    _board[oldCoords.x, oldCoords.y].UnitPresent = null;
   }
 
   List<Cell> _validMoveCells = new List<Cell>();

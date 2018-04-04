@@ -55,7 +55,7 @@ public class Unit : MonoBehaviour
     Health = GlobalConstants.UnitHealthByType[unit];
     Damage = GlobalConstants.UnitDamageByType[unit];
       
-    HealthBar.Init(Health);
+    HealthBar.Init(this);
 
     UnitText.text = _unitTextByType[unit];
 
@@ -93,6 +93,23 @@ public class Unit : MonoBehaviour
     }
 
     _worldPosition = pos;
+  }
+
+  public bool IsKilled = false;
+
+  public void ReceiveDamage(int damage)
+  {
+    Health -= damage;
+
+    if (Health < 0) Health = 0;
+
+    HealthBar.UpdateHealthIndicator();
+
+    if (Health == 0)
+    {
+      IsKilled = true;
+      Destroy(gameObject);
+    }
   }
 }
 

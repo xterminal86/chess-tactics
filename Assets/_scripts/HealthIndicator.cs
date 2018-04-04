@@ -9,19 +9,19 @@ public class HealthIndicator : MonoBehaviour
   public RectTransform HealthBorder;
   public GameObject HealthFillPrefab;
 
-  public int Health = 2;
+  Unit _unitRef;
 
   float _healthBorderSizeDelta = 0.26f;
   float _healthBarOffset = 0.26f;
 
   List<GameObject> _healthBars = new List<GameObject>();
-  public void Init(int health)
+  public void Init(Unit unitToMonitor)
   {
-    Health = health;
+    _unitRef = unitToMonitor;
 
-    HealthBorder.sizeDelta = new Vector2(0.32f + _healthBorderSizeDelta * (Health - 1), 0.32f);
+    HealthBorder.sizeDelta = new Vector2(0.32f + _healthBorderSizeDelta * (_unitRef.Health - 1), 0.32f);
 
-    for (int i = 0; i < Health; i++)
+    for (int i = 0; i < _unitRef.Health; i++)
     {
       GameObject o = Instantiate(HealthFillPrefab, new Vector3(0.0f, 0.0f, 0.0f), Quaternion.identity);
       RectTransform rt = o.GetComponent<RectTransform>();
@@ -31,29 +31,16 @@ public class HealthIndicator : MonoBehaviour
     }
   }
 
-  public void ReceiveDamage(int damage)
+  public void UpdateHealthIndicator()
   {
-    if (damage > Health)
+    foreach (var bar in _healthBars)
     {
-      return;
+      bar.SetActive(false);
     }
 
-    int counter = 0;
-    for (int i = _healthBars.Count - 1; i > 0; i--)
+    for (int i = 0; i < _unitRef.Health; i++)
     {
-      if (_healthBars[i].activeSelf)
-      {
-        _healthBars[i].SetActive(false);
-      }
-
-      Health--;
-
-      counter++;
-
-      if (counter == damage)
-      {
-        break;
-      }
+      _healthBars[i].SetActive(true);
     }
   }
 }
