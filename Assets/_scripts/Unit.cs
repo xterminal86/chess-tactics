@@ -7,6 +7,7 @@ using TMPro;
 public class Unit : MonoBehaviour 
 {
   public HealthIndicator HealthBar;
+  public GameObject RangedMarker;
 
   public RectTransform RectTransformRef;
   public TMP_Text UnitText;
@@ -91,6 +92,8 @@ public class Unit : MonoBehaviour
         IsRanged = true;
         break;
     }
+
+    RangedMarker.SetActive(IsRanged);
 
     _worldPosition = pos;
   }

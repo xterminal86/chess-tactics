@@ -200,11 +200,11 @@ public class Main : MonoBehaviour
               }
 
               GameOverseer.Instance.SpendCommandPoints(GlobalConstants.CommandPointsByUnit[_selectedUnit.ThisUnitType]);
-
-              //break;
             }
             else
             {
+              unitPresent.ReceiveDamage(GlobalConstants.UnitDamageByType[_selectedUnit.ThisUnitType]);
+              GameOverseer.Instance.SpendCommandPoints(GlobalConstants.CommandPointsByUnit[_selectedUnit.ThisUnitType]);
             }
           }
         }
@@ -433,71 +433,65 @@ public class Main : MonoBehaviour
     int ux = unit.ArrayCoordinates().x;
     int uy = unit.ArrayCoordinates().y;
 
-    int hx = ux + 1;
-    int hy = uy + 1;
-    int lx = ux - 1;
-    int ly = uy - 1;
-
     if (unit.Owner == PlayerType.PLAYER1)
     {
-      for (int i = 1; i < 3; i++)
+      List<Vector2Int> diagonals1 = new List<Vector2Int>() 
       {
-        if (unit.MovedFirstTime && i > 1)
-        {
-          break;
-        }
+        new Vector2Int(ux + 1, uy + 1),
+        new Vector2Int(ux + 1, uy - 1)
+      };
 
-        if (LimitsValid(lx, ly, hx, hy) && (_board[hx, hy].UnitPresent && _board[hx, hy].UnitPresent.Owner != GameOverseer.Instance.PlayerTurn))
-        {
-          _board[hx, hy].IsValidIndicator.color = _invalidColor;
-          _validMoveCells.Add(_board[hx, hy]);
-        }
+      Vector2Int oneStep1 = new Vector2Int(ux + 1, uy);
+      Vector2Int twoSteps1 = new Vector2Int(ux + 2, uy);
 
-        if (LimitsValid(lx, ly, hx, hy) && (_board[hx, ly].UnitPresent && _board[hx, ly].UnitPresent.Owner != GameOverseer.Instance.PlayerTurn))
-        {
-          _board[hx, ly].IsValidIndicator.color = _invalidColor;
-          _validMoveCells.Add(_board[hx, ly]);
-        }
-
-        if (_board[ux + i, uy].UnitPresent)
-        {
-          break;            
-        }
-
-        _validMoveCells.Add(_board[ux + i, uy]);
-
-        _board[ux + i, uy].IsValidIndicator.color = _validColor;
-      }
+      CheckPawnMovement(unit, diagonals1, oneStep1, twoSteps1);
     }
     else
     {
-      for (int i = 1; i < 3; i++)
+      List<Vector2Int> diagonals2 = new List<Vector2Int>() 
       {
-        if (unit.MovedFirstTime && i > 1)
-        {
-          break;
-        }
+        new Vector2Int(ux - 1, uy + 1),
+        new Vector2Int(ux - 1, uy - 1)
+      };
 
-        if (LimitsValid(lx, ly, hx, hy) && (_board[lx, ly].UnitPresent && _board[lx, ly].UnitPresent.Owner != GameOverseer.Instance.PlayerTurn))
-        {
-          _board[lx, ly].IsValidIndicator.color = _invalidColor;
-          _validMoveCells.Add(_board[lx, ly]);
-        }
+      Vector2Int oneStep2 = new Vector2Int(ux - 1, uy);
+      Vector2Int twoSteps2 = new Vector2Int(ux - 2, uy);
 
-        if (LimitsValid(lx, ly, hx, hy) && (_board[lx, hy].UnitPresent && _board[lx, hy].UnitPresent.Owner != GameOverseer.Instance.PlayerTurn))
-        {
-          _board[lx, hy].IsValidIndicator.color = _invalidColor;
-          _validMoveCells.Add(_board[lx, hy]);
-        }
+      CheckPawnMovement(unit, diagonals2, oneStep2, twoSteps2);
+    }
+  }
 
-        if (_board[ux - i, uy].UnitPresent)
-        {
-          break;            
-        }
+  void CheckPawnMovement(Unit unit, List<Vector2Int> diagonals, Vector2Int oneStep, Vector2Int twoSteps)
+  {
+    foreach (var item in diagonals)
+    {
+      if (IsInGrid(item) && _board[item.x, item.y].UnitPresent && _board[item.x, item.y].UnitPresent.Owner != GameOverseer.Instance.PlayerTurn)
+      {
+        _board[item.x, item.y].IsValidIndicator.color = _invalidColor;
+        _validMoveCells.Add(_board[item.x, item.y]);
+      }
+    }
 
-        _validMoveCells.Add(_board[ux - i, uy]);
+    if (IsInGrid(oneStep) && _board[oneStep.x, oneStep.y].UnitPresent)
+    {
+      return;
+    }
+    else if (IsInGrid(oneStep) && !_board[oneStep.x, oneStep.y].UnitPresent)
+    {
+      _board[oneStep.x, oneStep.y].IsValidIndicator.color = _validColor;
+      _validMoveCells.Add(_board[oneStep.x, oneStep.y]);
+    }
 
-        _board[ux - i, uy].IsValidIndicator.color = _validColor;
+    if (!unit.MovedFirstTime)
+    {
+      if (IsInGrid(twoSteps) && _board[twoSteps.x, twoSteps.y].UnitPresent)
+      {
+        return;
+      }
+      else if (IsInGrid(twoSteps) && !_board[twoSteps.x, twoSteps.y].UnitPresent)
+      {
+        _board[twoSteps.x, twoSteps.y].IsValidIndicator.color = _validColor;
+        _validMoveCells.Add(_board[twoSteps.x, twoSteps.y]);
       }
     }
   }
