@@ -18,12 +18,12 @@ MonoBehaviour:
   m_fontInfo:
     Name: Old_Terminal
     PointSize: 73
-    Scale: 0
+    Scale: 1
     CharacterCount: 97
     LineHeight: 89
     Baseline: 0
     Ascender: 78
-    CapHeight: 0
+    CapHeight: 63
     Descender: -9
     CenterLine: 0
     SuperscriptOffset: 78
@@ -33,7 +33,7 @@ MonoBehaviour:
     UnderlineThickness: 1.7109375
     strikethrough: 25.09091
     strikethroughThickness: 1.7109375
-    TabWidth: 0
+    TabWidth: 360
     Padding: 5
     AtlasWidth: 512
     AtlasHeight: 512
@@ -42,10 +42,10 @@ MonoBehaviour:
   - id: 32
     x: 5
     y: 507
-    width: 0
-    height: 0
+    width: 36
+    height: 87
     xOffset: 0
-    yOffset: 0
+    yOffset: 78
     xAdvance: 36
     scale: 1
   - id: 33
@@ -976,8 +976,8 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Old_Terminal SDF Material
-  m_Shader: {fileID: 4800000, guid: dca26082f9cb439469295791d9f76fe5, type: 3}
-  m_ShaderKeywords: 
+  m_Shader: {fileID: 4800000, guid: cafd18099dfc0114896e0a8b277b81b6, type: 3}
+  m_ShaderKeywords: OUTLINE_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -1032,10 +1032,10 @@ Material:
     - _OutlineSoftness: 0
     - _OutlineUVSpeedX: 0
     - _OutlineUVSpeedY: 0
-    - _OutlineWidth: 0
+    - _OutlineWidth: 1
     - _PerspectiveFilter: 0.875
     - _Reflectivity: 10
-    - _ScaleRatioA: 0.8333333
+    - _ScaleRatioA: 0.7017544
     - _ScaleRatioB: 0.6770833
     - _ScaleRatioC: 0.6770833
     - _ScaleX: 1

@@ -112,6 +112,11 @@ public class Unit : MonoBehaviour
     {
       IsKilled = true;
       Destroy(gameObject);
+
+      if (ThisUnitType == UnitType.KING)
+      {
+        GameOverseer.Instance.SetGameOver(Owner == PlayerType.PLAYER1 ? "PLAYER 2 WINS!" : "PLAYER 1 WINS!");
+      }
     }
   }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 public class GameOverseer : MonoSingleton<GameOverseer> 
@@ -9,6 +10,9 @@ public class GameOverseer : MonoSingleton<GameOverseer>
   public Sprite[] UnitsSprites;
 
   public GameObject[] CommandPointSprites;
+
+  public GameObject GameOverGroup;
+  public TMP_Text GameOverText;
 
   PlayerType _playerTurn = PlayerType.PLAYER1;
   public PlayerType PlayerTurn
@@ -60,5 +64,29 @@ public class GameOverseer : MonoSingleton<GameOverseer>
     }
    
     PlayerTurn = (PlayerTurn == PlayerType.PLAYER1) ? PlayerType.PLAYER2 : PlayerType.PLAYER1;
+  }
+
+  public bool IsGameOver = false;
+
+  public void SetGameOver(string gameOverText)
+  {
+    GameOverGroup.SetActive(true);
+    GameOverText.text = gameOverText;
+    IsGameOver = true;
+  }
+
+  public void RestartGameHandler()
+  {
+    IsGameOver = false;
+    GameOverGroup.SetActive(false);
+    PlayerTurn = PlayerType.PLAYER1;
+    CommandPoints = 3;
+
+    for (int i = 0; i < CommandPoints; i++)
+    {
+      CommandPointSprites[i].SetActive(true);
+    }
+
+    SceneManager.LoadScene("main");
   }
 }

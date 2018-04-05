@@ -122,6 +122,11 @@ public class Main : MonoBehaviour
   RaycastHit _hitInfo;
   void Update()
   {
+    if (GameOverseer.Instance.IsGameOver)
+    {
+      return;
+    }
+
     if (Input.GetMouseButtonDown(0))
     {
       Ray r = Camera.main.ScreenPointToRay(Input.mousePosition);

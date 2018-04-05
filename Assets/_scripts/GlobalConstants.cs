@@ -25,18 +25,18 @@ public static class GlobalConstants
     { UnitType.BISHOP, 1 },
     { UnitType.KNIGHT, 1 },
     { UnitType.ROOK, 2 },
-    { UnitType.QUEEN, 2 },
-    { UnitType.KING, 2 },
+    { UnitType.QUEEN, 3 },
+    { UnitType.KING, 3 },
   };
 
   public static Dictionary<UnitType, int> CommandPointsByUnit = new Dictionary<UnitType, int>() 
   {
     { UnitType.PAWN, 1 },
-    { UnitType.BISHOP, 2 },
-    { UnitType.KNIGHT, 2 },
-    { UnitType.ROOK, 3 },
-    { UnitType.QUEEN, 3 },
-    { UnitType.KING, 3 },
+    { UnitType.BISHOP, 1 },
+    { UnitType.KNIGHT, 1 },
+    { UnitType.ROOK, 2 },
+    { UnitType.QUEEN, 2 },
+    { UnitType.KING, 2 },
   };
 }
 
