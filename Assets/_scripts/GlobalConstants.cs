@@ -34,9 +34,9 @@ public static class GlobalConstants
     { UnitType.PAWN, 1 },
     { UnitType.BISHOP, 1 },
     { UnitType.KNIGHT, 1 },
-    { UnitType.ROOK, 2 },
-    { UnitType.QUEEN, 2 },
-    { UnitType.KING, 2 },
+    { UnitType.ROOK, 1 },
+    { UnitType.QUEEN, 1 },
+    { UnitType.KING, 1 },
   };
 }
 

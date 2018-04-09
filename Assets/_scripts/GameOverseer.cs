@@ -27,11 +27,22 @@ public class GameOverseer : MonoSingleton<GameOverseer>
 
   public TMP_Text TurnIndicator;
 
-  public int CommandPoints = 3;
+  const int InitialCommandPoints = 1;
+  public int CommandPoints = InitialCommandPoints;
 
   public override void Initialize()
   {
     PlayerTurn = PlayerType.PLAYER1;
+
+    foreach (var star in CommandPointSprites)
+    {
+      star.SetActive(false);
+    }
+
+    for (int i = 0; i < CommandPoints; i++)
+    {
+      CommandPointSprites[i].SetActive(true);
+    }
   }
 
   public void SpendCommandPoints(int pointsToSpend)
@@ -56,7 +67,7 @@ public class GameOverseer : MonoSingleton<GameOverseer>
 
   public void TurnDone()
   {
-    CommandPoints = 3;
+    CommandPoints = InitialCommandPoints;
 
     for (int i = 0; i < CommandPoints; i++)
     {
@@ -80,7 +91,7 @@ public class GameOverseer : MonoSingleton<GameOverseer>
     IsGameOver = false;
     GameOverGroup.SetActive(false);
     PlayerTurn = PlayerType.PLAYER1;
-    CommandPoints = 3;
+    CommandPoints = InitialCommandPoints;
 
     for (int i = 0; i < CommandPoints; i++)
     {

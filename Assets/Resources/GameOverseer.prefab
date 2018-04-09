@@ -284,7 +284,7 @@ MonoBehaviour:
   GameOverGroup: {fileID: 1794396996628528}
   GameOverText: {fileID: 114895161652862166}
   TurnIndicator: {fileID: 114599007143890254}
-  CommandPoints: 3
+  CommandPoints: 1
   IsGameOver: 0
 --- !u!114 &114337486882279286
 MonoBehaviour:

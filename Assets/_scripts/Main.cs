@@ -157,6 +157,7 @@ public class Main : MonoBehaviour
     }
     else if (Input.GetMouseButtonDown(1))
     {
+      _selectedUnit = null;
       ResetCellColors();
       _selectionOutline.gameObject.SetActive(false);
     }
